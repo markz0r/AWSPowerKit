@@ -4,6 +4,8 @@
 !obj/*.json
 !obj/*.props
 !obj/*.targets
+!AWSPowerKit-*/
+!AWSPowerKit-*/*/
 !**/*.psd1
 !**/*.psm1
 !README.md

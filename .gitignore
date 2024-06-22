@@ -1,12 +1,11 @@
 # Ignore all files and directories except for *.psd1, *.psm1 README.md, LICENSE, and .gitignore
 *
-!obj
+!obj/
 !obj/*.json
 !obj/*.props
 !obj/*.targets
-!AWSPowerKit*/
-!*.psd1
-!*.psm1
+!**/*.psd1
+!**/*.psm1
 !README.md
 !.gitignore
 !.gitattributes

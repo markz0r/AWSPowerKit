@@ -9,7 +9,7 @@
 @{
 
     # Script module or binary module file associated with this manifest.
-    RootModule        = 'AWSPowerKit-EC2.psm1'
+    RootModule        = 'AWSPowerKit-Shared.psm1'
 
     # Version number of this module.
     ModuleVersion     = '1.0.0'
@@ -18,7 +18,7 @@
     # CompatiblePSEditions = @()
 
     # ID used to uniquely identify this module
-    GUID              = 'e4b0ffdd-7f0a-478e-ab30-0259a608f064'
+    GUID              = '0b60889f-3c13-4c01-861d-54ccd7e88235'
 
     # Author of this module
     Author            = 'Mark Culhane'
@@ -70,7 +70,7 @@
 
 
     # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-    FunctionsToExport = @('Get-EC2Report')
+    FunctionsToExport = @('*')
 
     # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
     CmdletsToExport   = @()

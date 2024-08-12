@@ -6,17 +6,20 @@
 
 ## Maybe
 
-
 ## Quick Start
 
 ```powershell
 git clone https://github.com/markz0r/AWSPowerKit.git
-cd .\AWSPowerKit; Import-Module "AWSPowerKit.psd1" -Force
+
+cd .\AWSPowerKit\AWSPowerKitReports\
+; Import-Module "AWSPowerKit.psd1" -Force
 ```
-## Usage
+
+## Usage Examples
 
 ```powershell
- 
+
+
 ```
 
 ## Prerequisites

@@ -2,16 +2,6 @@
 $ErrorActionPreference = 'Stop'; $DebugPreference = 'Continue'
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
-function Select-AWSProfile {
-    # Show list of AWS profiles configured on the system with numbered selection then prompt for selection and set the $AWS_PROFILE variable to the corresponding profile name, not the profile number
-    $AWS_PROFILES = aws configure list-profiles
-    $AWS_PROFILES | ForEach-Object -Begin { $i = 1 } -Process { Write-Host "$i. $_"; $i++ }
-    $AWS_PROFILE = Read-Host 'Select AWS Profile Number'
-    $AWS_PROFILE = $AWS_PROFILES[$AWS_PROFILE - 1]
-    Write-Debug "You selected profile $AWS_PROFILE"
-    $AWS_PROFILE
-}
-
 function Get-Repolist {
     [CmdletBinding()]
     param(
@@ -22,6 +12,25 @@ function Get-Repolist {
     Write-Debug "REPO_LIST: $REPO_LIST"
     $REPO_LIST_OBJECT = $REPO_LIST | ConvertFrom-Json
     $REPO_LIST_OBJECT
+}
+
+function Get-ECRReport {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$AWS_PROFILE,
+        [Parameter(Mandatory = $false)]
+        [System.Object]$ECR_REPO_LIST,
+        [Parameter(Mandatory = $true)]
+        [string]$SIMPLE_NAME
+    )
+    $PULL_DATE = Get-Date -Format 'yyyyMMdd'
+    $REPORT_PATH = "${PWD}\ECR-Scan-Report-${SIMPLE_NAME}-${PULL_DATE}.xlsx"
+    if (!$ECR_REPO_LIST) {
+        $ECR_REPO_LIST = Get-Repolist -AWS_PROFILE $AWS_PROFILE
+    }
+    Write-Debug "REPORT_PATH: $REPORT_PATH, SheetName: ${SIMPLE_NAME}-${PULL_DATE}, AWS_PROFILE: $AWS_PROFILE, ECR_REPO_LIST: $ECR_REPO_LIST"
+    Export-ExcelFile -REPORT_PATH "$REPORT_PATH" -SheetName "${SIMPLE_NAME}-${PULL_DATE}" -ECR_REPO_LIST ${ECR_REPO_LIST} -AWS_PROFILE $AWS_PROFILE -SIMPLE_NAME $SIMPLE_NAME
+    Write-Debug "Report saved to $REPORT_PATH"
 }
 
 function Add-Row {
@@ -109,6 +118,7 @@ function Add-Summary {
     $ExcelSheet.Cells.Item(9, 1) = 'Total Images'
     $ExcelSheet.Cells.Item(9, 2) = "$IMAGE_COUNT"
 }
+
 function Format-ExcelSheets {
     param(
         [Parameter(Mandatory = $true)]
@@ -375,27 +385,4 @@ function Export-ExcelFile {
     $workbook.SaveAs($REPORT_PATH)
     $workbook.Close()
     $excel.Quit()
-}
-
-function Get-ECRReport {
-    [CmdletBinding()]
-    param(
-        [Parameter(Mandatory = $false)]
-        [string]$AWS_PROFILE,
-        [Parameter(Mandatory = $false)]
-        [System.Object]$ECR_REPO_LIST,
-        [Parameter(Mandatory = $true)]
-        [string]$SIMPLE_NAME
-    )
-    $PULL_DATE = Get-Date -Format 'yyyyMMdd'
-    if (!$AWS_PROFILE) {
-        $AWS_PROFILE = Select-AWSProfile
-    }
-    $REPORT_PATH = "${PWD}\ECR-Scan-Report-${SIMPLE_NAME}-${PULL_DATE}.xlsx"
-    if (!$ECR_REPO_LIST) {
-        $ECR_REPO_LIST = Get-Repolist -AWS_PROFILE $AWS_PROFILE
-    }
-    Write-Debug "REPORT_PATH: $REPORT_PATH, SheetName: ${SIMPLE_NAME}-${PULL_DATE}, AWS_PROFILE: $AWS_PROFILE, ECR_REPO_LIST: $ECR_REPO_LIST"
-    Export-ExcelFile -REPORT_PATH "$REPORT_PATH" -SheetName "${SIMPLE_NAME}-${PULL_DATE}" -ECR_REPO_LIST ${ECR_REPO_LIST} -AWS_PROFILE $AWS_PROFILE -SIMPLE_NAME $SIMPLE_NAME
-    Write-Debug "Report saved to $REPORT_PATH"
 }
